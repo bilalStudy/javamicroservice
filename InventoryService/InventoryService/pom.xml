@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.bilalkristiania</groupId>
-	<artifactId>OrderService</artifactId>
+	<artifactId>InventoryService</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>OrderService</name>
-	<description>OrderService created with spring boot</description>
+	<name>InventoryService</name>
+	<description>InventoryService created with spring boot</description>
 	<properties>
 		<java.version>20</java.version>
 	</properties>
@@ -83,4 +83,5 @@
 			</plugin>
 		</plugins>
 	</build>
+
 </project>
