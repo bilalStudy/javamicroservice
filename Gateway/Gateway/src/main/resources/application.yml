@@ -1,0 +1,50 @@
+server:
+  port: 9080
+
+spring:
+  application:
+    name: Gateway
+  config:
+    import: "optional:consul:"
+  cloud:
+    loadbalancer:
+      ribbon:
+        enabled: false
+    consul:
+      enabled: true
+      discovery:
+        query-passing: true
+      config:
+        data-key: application.yml
+        prefixes: config
+        format: yaml
+        default-context: defaults
+    gateway:
+      routes:
+        - id: OrderService
+          uri: lb://OrderService/
+          predicates:
+            - Path=/api/orders/**
+        - id: ProductService
+          uri: lb://ProductService/
+          predicates:
+            - Path=/api/products/**   # Route requests with paths starting with /api/products/
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "http://localhost:3000"
+            allowedHeaders:
+              - "*"
+            allowedMethods:
+              - "GET"
+              - "POST"
+              - "OPTIONS"
+      default-filters:
+        - name: Retry
+          args:
+            retries: 3
+            methods: GET,POST
+
+logging:
+  level:
+    org.springframework.amqp.rabbit.connection.CachingConnectionFactory: WARN
