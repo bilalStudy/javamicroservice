@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: PaymentService
+  cloud:
+    consul:
+      config:
+        prefixes: config
+        format: yaml
+        default-context: defaults
+        data-key: application.yml

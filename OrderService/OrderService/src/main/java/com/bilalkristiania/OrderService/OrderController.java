@@ -13,9 +13,11 @@ import java.util.List;
 public class OrderController {
 
     private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
 
-    OrderController(OrderRepository orderRepository){
+    OrderController(OrderRepository orderRepository, OrderItemRepository orderItemRepository){
         this.orderRepository = orderRepository;
+        this.orderItemRepository = orderItemRepository;
     }
 
     @GetMapping("/orders")
@@ -29,8 +31,31 @@ public class OrderController {
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Didnt find product with ID" + id));
     }
 
+
+    private double calculateTotalAmount(List<OrderItem> items) {
+        return items.stream()
+                .mapToDouble(item -> item.getQuantity() * item.getUnitPrice())
+                .sum();
+    }
+
     @PostMapping("/orders")
     public Order newOrder(@RequestBody Order order){
+
+
+        //was needed because i didnt have an OrderItemRepository
+        /*
+        for (OrderItems orderItems: order.getOrderItems()) {
+            orderItems.setOrder(order);
+        }
+        order.setOrderItems(order.getOrderItems());
+
+         */
+
+        log.info("OrderItems size: " + order.getOrderItems().size());
+        double totalAmount = calculateTotalAmount(order.getOrderItems());
+        order.setTotalAmount(totalAmount);
+
+
         return orderRepository.save(order);
     }
 

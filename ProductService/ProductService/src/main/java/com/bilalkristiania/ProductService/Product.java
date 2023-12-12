@@ -18,8 +18,21 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String productName;
+    // car brand
+    // car name
+    // car productionYear
+    // car color maybe enum later
+    // car fuel
+    // car transmission
+    // mileage would be relevant if we sold used cars, but we dont
+    // maybe feature list
+
+    private String carName;
+    private String manufacturer;
+    private String color;
+    private String fuel;
+    private String transmission;
     private BigDecimal price;
     private String description;
-    private String manufacturer;
+    private boolean available;
 }

@@ -1,17 +1,21 @@
 package com.bilalkristiania.InventoryService;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+public interface InventoryService {
 
-@Service
-@RequiredArgsConstructor
-public class InventoryService {
+    boolean processOrderEvent(OrderEvent orderEvent);
+    boolean processPayment(OrderEvent orderEvent);
 
-    private final InventoryRepository inventoryRepository;
+    //get by id method
+    //get all method maybe
+    //save method
 
-    @Transactional(readOnly = true)
-    public boolean isInStock(String skuCode){
-        return inventoryRepository.isInStock().isPresent();
-    }
+    Inventory getInventoryById(Long id);
+
+    Inventory saveInventory(Inventory carInventory);
+
+    EquipmentInventory getEquipmentById(Long id);
+
+    EquipmentInventory saveEquipmentById(EquipmentInventory equipmentInventory);
+
+
 }

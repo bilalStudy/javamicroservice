@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: AMQPPayment
+  cloud:
+    consul:
+      config:
+        prefixes: config
+        format: yaml
+        default-context: defaults
+        data-key: application.yml

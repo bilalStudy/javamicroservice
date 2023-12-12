@@ -1,0 +1,1 @@
+create table order (id bigint not null, amount varchar(255), date varchar(255), name varchar(255), status varchar(255), primary key (id))

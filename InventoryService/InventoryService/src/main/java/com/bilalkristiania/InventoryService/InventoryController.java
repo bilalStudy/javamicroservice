@@ -27,14 +27,7 @@ public class InventoryController {
 
     @GetMapping("/inventory/{id}")
     public Inventory getInventoryById(@PathVariable Long id){
-        return inventoryRepository.findById(id)
-                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Didnt find product with ID" + id));
-    }
-
-    @GetMapping("/inventory/{sku-code}")
-    @ResponseStatus(HttpStatus.OK)
-    public Boolean isInStock (@PathVariable("sku-code") String skuCode){
-        return inventoryService.isInStock(skuCode);
+        return inventoryService.getInventoryById(id);
     }
 
     @PostMapping("/inventory")
