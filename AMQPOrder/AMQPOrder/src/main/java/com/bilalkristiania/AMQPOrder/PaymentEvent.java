@@ -12,6 +12,5 @@ public class PaymentEvent {
     private long orderId;
     private boolean paymentSuccessful;
     private String status;
-    private String name;
-    private String amount;
+    private String totalAmount;
 }

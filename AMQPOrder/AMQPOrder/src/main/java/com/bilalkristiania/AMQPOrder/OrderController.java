@@ -1,5 +1,7 @@
 package com.bilalkristiania.AMQPOrder;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.http.HttpStatus;
@@ -16,9 +18,12 @@ public class OrderController {
     private final OrderService orderService;
     private final OrderRepository orderRepository;
 
-    OrderController(OrderRepository orderRepository, OrderService orderService){
+    private final EquipmentItemRepository equipmentItemRepository;
+
+    OrderController(OrderRepository orderRepository, OrderService orderService, EquipmentItemRepository equipmentItemRepository){
         this.orderRepository = orderRepository;
         this.orderService = orderService;
+        this.equipmentItemRepository = equipmentItemRepository;
     }
 
     @GetMapping("/orders")
@@ -43,6 +48,7 @@ public class OrderController {
     public void newOrderAndSendEvent(@RequestBody Order order) {
         orderService.saveOrderAndSendMsg(order);
     }
+
 
 
 }

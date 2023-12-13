@@ -13,11 +13,11 @@ import java.util.List;
 public class OrderController {
 
     private final OrderRepository orderRepository;
-    private final OrderItemRepository orderItemRepository;
+    private final EquipmentItemRepository equipmentItemRepository;
 
-    OrderController(OrderRepository orderRepository, OrderItemRepository orderItemRepository){
+    OrderController(OrderRepository orderRepository, EquipmentItemRepository equipmentItemRepository){
         this.orderRepository = orderRepository;
-        this.orderItemRepository = orderItemRepository;
+        this.equipmentItemRepository = equipmentItemRepository;
     }
 
     @GetMapping("/orders")
@@ -32,27 +32,25 @@ public class OrderController {
     }
 
 
-    private double calculateTotalAmount(List<OrderItem> items) {
-        return items.stream()
+    private double calculateTotalAmount(List<EquipmentItem> items, double productAmount) {
+        double equipmentTotal = items.stream()
                 .mapToDouble(item -> item.getQuantity() * item.getUnitPrice())
                 .sum();
+
+        return equipmentTotal + productAmount;
     }
 
     @PostMapping("/orders")
     public Order newOrder(@RequestBody Order order){
 
-
-        //was needed because i didnt have an OrderItemRepository
-        /*
-        for (OrderItems orderItems: order.getOrderItems()) {
-            orderItems.setOrder(order);
+        for (EquipmentItem equipmentItem: order.getOrderItems()) {
+            equipmentItem.setOrder(order);
+            equipmentItem.setSubtotal(equipmentItem.getUnitPrice()*equipmentItem.getQuantity());
         }
-        order.setOrderItems(order.getOrderItems());
 
-         */
 
         log.info("OrderItems size: " + order.getOrderItems().size());
-        double totalAmount = calculateTotalAmount(order.getOrderItems());
+        double totalAmount = calculateTotalAmount(order.getOrderItems(), order.getProductAmount());
         order.setTotalAmount(totalAmount);
 
 

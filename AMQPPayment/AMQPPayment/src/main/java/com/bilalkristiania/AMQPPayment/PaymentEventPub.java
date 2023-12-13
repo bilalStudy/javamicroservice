@@ -34,8 +34,7 @@ public class PaymentEventPub {
         event.setOrderId(inputEvent.getOrderId());
         event.setPaymentSuccessful(inputEvent.isPaymentSuccessful());
         event.setStatus(inputEvent.getStatus());
-        event.setName(inputEvent.getName());
-        event.setAmount(inputEvent.getAmount());
+        event.setTotalAmount(inputEvent.getTotalAmount());
         return event;
     }
 }

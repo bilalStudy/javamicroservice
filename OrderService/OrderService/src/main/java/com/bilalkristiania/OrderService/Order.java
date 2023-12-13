@@ -21,9 +21,12 @@ public class Order {
     private Long userId;
     // need some field somewhere to identify what user it is making this if its userId or userName
     // should maybe also have some field for products
+    private Long productId;
+    private String productName;
     private String orderDate;
     private String status;
+    private double productAmount;
     private double totalAmount;
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OrderItem> orderItems;
+    private List<EquipmentItem> orderItems;
 }

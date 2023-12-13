@@ -4,6 +4,9 @@ import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class OrderEventPub {
 
@@ -37,12 +40,35 @@ public class OrderEventPub {
 
     private OrderEvent buildEvent(final OrderEvent inputEvent) {
         OrderEvent event = new OrderEvent();
-        // Perform any necessary event transformation here
+
+        // Copying basic order details
         event.setId(inputEvent.getId());
+        event.setUserId(inputEvent.getUserId());
+        event.setProductId(inputEvent.getProductId());
+        event.setProductName(inputEvent.getProductName());
+        event.setOrderDate(inputEvent.getOrderDate());
         event.setStatus(inputEvent.getStatus());
-        event.setName(inputEvent.getName());
-        event.setDate(inputEvent.getDate());
-        event.setAmount(inputEvent.getAmount());
+        event.setProductAmount(inputEvent.getProductAmount());
+        event.setTotalAmount(inputEvent.getTotalAmount());
+
+        // Copying equipment items details
+        if (inputEvent.getEquipmentItems() != null) {
+            List<OrderEvent.EquipmentItemDetails> equipmentItems = inputEvent.getEquipmentItems()
+                    .stream()
+                    .map(item -> new OrderEvent.EquipmentItemDetails(
+                            item.getEquipmentOrderId(),
+                            item.getEquipmentId(),
+                            item.getEquipmentName(),
+                            item.getQuantity(),
+                            item.getUnitPrice(),
+                            item.getSubtotal()))
+                    .collect(Collectors.toList());
+            event.setEquipmentItems(equipmentItems);
+        }
+
+        // Perform any additional necessary event transformation here
+
         return event;
     }
+
 }

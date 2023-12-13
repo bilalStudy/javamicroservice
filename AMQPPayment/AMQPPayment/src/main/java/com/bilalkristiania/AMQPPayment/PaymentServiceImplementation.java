@@ -29,7 +29,8 @@ public class PaymentServiceImplementation implements PaymentService{
     // might need to parse the Double to BigDecimal instead
     @Override
     public PaymentResult processOrderEvent(OrderEvent orderEvent) {
-        double orderAmount = Double.parseDouble(orderEvent.getAmount());
+        //should not need the line below, but we rafactor later
+        double orderAmount = orderEvent.getTotalAmount();
         log.info("Processing Order Event: {}", orderEvent);
         PaymentResult paymentResult = processPayment(orderEvent);
         boolean paymentSuccessful = paymentResult.isPaymentSuccessful();
@@ -51,7 +52,7 @@ public class PaymentServiceImplementation implements PaymentService{
             return paymentRepository.save(newPayment);
         });
 
-        double orderAmount = Double.parseDouble(orderEvent.getAmount());
+        double orderAmount =orderEvent.getTotalAmount();
         BigDecimal currentBalance = payment.getBalance();
 
         boolean paymentSuccessful = false;
@@ -123,8 +124,7 @@ public class PaymentServiceImplementation implements PaymentService{
         paymentEvent.setOrderId(orderEvent.getId());
         paymentEvent.setPaymentSuccessful(paymentSuccessful);
         paymentEvent.setStatus(orderEvent.getStatus());
-        paymentEvent.setName(orderEvent.getName());
-        paymentEvent.setAmount(orderEvent.getAmount());
+        paymentEvent.setTotalAmount(orderEvent.getTotalAmount());
 
         paymentEventPub.sendPaymentEvent(paymentEvent);
     }

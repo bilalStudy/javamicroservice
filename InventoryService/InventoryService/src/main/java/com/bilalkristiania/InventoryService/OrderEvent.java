@@ -11,8 +11,5 @@ import lombok.ToString;
 public class OrderEvent {
     // might need refactoring of order class
     private Long id;
-    private String status;
-    private String name;
-    private String date;
-    private String amount;
+    private Long productId;
 }

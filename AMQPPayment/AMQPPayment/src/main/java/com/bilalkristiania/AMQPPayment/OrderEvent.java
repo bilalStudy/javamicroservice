@@ -10,8 +10,6 @@ import lombok.ToString;
 public class OrderEvent {
     private Long id;
     private String status;
-    private String name;
-    private String date;
-    private String amount;
+    private double totalAmount;
 }
 
