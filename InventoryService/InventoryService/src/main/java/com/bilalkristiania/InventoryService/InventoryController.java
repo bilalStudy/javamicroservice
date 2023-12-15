@@ -1,9 +1,7 @@
 package com.bilalkristiania.InventoryService;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -28,6 +26,11 @@ public class InventoryController {
     @GetMapping("/inventory/{id}")
     public Inventory getInventoryById(@PathVariable Long id){
         return inventoryService.getInventoryById(id);
+    }
+
+    @GetMapping("/inventory/getProduct/{productId}")
+    public Inventory getProductWithIdFromInventory(@PathVariable Long productId){
+        return inventoryService.getInventoryByProductId(productId);
     }
 
     @PostMapping("/inventory")

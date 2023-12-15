@@ -6,8 +6,6 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
-
 @Slf4j
 @Component
 public class RecievePaymentEvent {
@@ -20,7 +18,13 @@ public class RecievePaymentEvent {
     }
 
     @RabbitListener(queues = "${amqp.queue.payment}") // Replace with the actual queue name
-    public void receiveOrderEvent(PaymentEvent paymentEvent) {
-        log.info("Received Order Event in Payment Service: {}", paymentEvent);
+    public void receivePaymentEvent(PaymentEvent paymentEvent) {
+        log.info("Received Payment Event in Order Service: {}", paymentEvent);
+    }
+
+    //need to move this to another class or rename the class to listener
+    @RabbitListener(queues = "${amqp.queue.inventory}")
+    public void receiveInventoryEvent(InventoryEvent inventoryEvent){
+        log.info("Recieved Inventory Event in Order Service: {}", inventoryEvent);
     }
 }

@@ -12,4 +12,5 @@ public class OrderEvent {
     // might need refactoring of order class
     private Long id;
     private Long productId;
+    private String status;
 }

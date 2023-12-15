@@ -1,4 +1,4 @@
-package com.bilalkristiania.InventoryService.Configuration;
+package com.bilalkristiania.ProductService.Configuration;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
@@ -14,39 +14,6 @@ import org.springframework.messaging.handler.annotation.support.MessageHandlerMe
 
 @Configuration
 public class AMQPConfiguration {
-
-    @Value("${amqp.routing.key.inventory}")
-    private String routingKey;
-
-    @Value("${amqp.routing.key.product}")
-    private String productRoutingKey;
-
-    @Bean
-    public Queue inventoryQueue(@Value("${amqp.queue.inventory}") final String queueName){
-        return QueueBuilder.durable(queueName).build();
-    }
-
-    @Bean
-    public TopicExchange inventoryExchange(
-            @Value("${amqp.exchange.inventory}") final String exchangeName) {
-        return ExchangeBuilder.topicExchange(exchangeName).durable(true).build();
-    }
-
-    @Bean
-    public Binding InventoryBinding(final Queue orderQueue,
-                                 final TopicExchange orderExchange) {
-        return BindingBuilder.bind(orderQueue)
-                .to(orderExchange)
-                .with(routingKey);
-    }
-
-    @Bean
-    public Binding InventoryBindingForProduct(final Queue orderQueue,
-                                    final TopicExchange orderExchange) {
-        return BindingBuilder.bind(orderQueue)
-                .to(orderExchange)
-                .with(productRoutingKey);
-    }
 
     @Bean
     public MessageHandlerMethodFactory messageHandlerMethodFactory() {
