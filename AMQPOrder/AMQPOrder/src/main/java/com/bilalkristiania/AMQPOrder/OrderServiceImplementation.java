@@ -1,13 +1,19 @@
 package com.bilalkristiania.AMQPOrder;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 
+import javax.persistence.Transient;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,7 +26,11 @@ public class OrderServiceImplementation implements OrderService{
 
     private final OrderEventPub orderEventPub;
 
+    private final RestTemplate restTemplate;
+
+
     @Value("${amqp.routing.key.inventory}")
+    @Transient
     private String inventoryRoutingKey;
 
     @Override
@@ -43,12 +53,34 @@ public class OrderServiceImplementation implements OrderService{
         return orderRepository.save(order);
     }
 
+    public boolean checkUserExists(Long userId) {
+        final String url = "http://localhost:8080/api/users/" + userId; // URL of your User Service
+        try {
+            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+            log.info("Response from User Service for userID {}: {}", userId, response.getBody());
+            return response.getStatusCode() == HttpStatus.OK;
+        } catch (HttpClientErrorException.NotFound e) {
+            log.warn("User not found for userID {}", userId);
+            return false;
+        } catch (Exception e) {
+            log.error("Error while checking if user exists for userID {}: {}", userId, e.getMessage());
+            return false;
+        }
+    }
+
+
     @Transactional
     @Override
     public Order saveOrderAndSendMsg(Order order){
         setOrderAndSubtotal(order);
 
         Order result = orderRepository.save(order);
+        // check for userId
+        if (!checkUserExists(result.getUserId())) {
+            // Handle the case where the user does not exist
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found");
+        }
+
         // Create an OrderEvent object from the order
         OrderEvent orderEvent = new OrderEvent();
         orderEvent.setId(result.getId());

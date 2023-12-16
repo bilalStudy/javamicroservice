@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.math.BigDecimal;
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -55,6 +55,8 @@ public class InventoryServiceImplementation implements InventoryService{
         return inventoryRepository.findByProductId(productId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Didn't find inventory with Product ID: " + productId));
     }
+
+
 
 
     @Override

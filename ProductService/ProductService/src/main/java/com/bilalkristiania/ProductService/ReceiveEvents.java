@@ -21,5 +21,6 @@ public class ReceiveEvents {
     @RabbitListener(queues = "${amqp.queue.inventory}") // Replace with the actual queue name
     public void receiveOrderEvent(InventoryEvent inventoryEvent) {
         log.info("Received Order Event in Inventory Service: {}", inventoryEvent);
+        productServiceImplementation.processInventoryEvent(inventoryEvent);
     }
 }

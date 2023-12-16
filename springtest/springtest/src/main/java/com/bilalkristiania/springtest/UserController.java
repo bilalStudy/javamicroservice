@@ -28,8 +28,6 @@ public class UserController {
         return userRepository.findById(id)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Didnt find User with ID" + id));
     }
-
-
     @PostMapping("/users")
     public User newUser(@RequestBody User user){
         return userRepository.save(user);
