@@ -44,9 +44,15 @@ public class AMQPConfiguration {
     }
 
     @Bean
-    public Binding OrdersBindingForStock(final Queue orderQueue,
+    public Queue orderQueueForInventory(@Value("${amqp.queue.order.to.inventory}") final String queueName){
+        return QueueBuilder.durable(queueName).build();
+    }
+
+
+    @Bean
+    public Binding OrdersBindingForStock(final Queue orderQueueForInventory,
                                  final TopicExchange orderExchange) {
-        return BindingBuilder.bind(orderQueue)
+        return BindingBuilder.bind(orderQueueForInventory)
                 .to(orderExchange)
                 .with(inventoryRoutingKey);
     }

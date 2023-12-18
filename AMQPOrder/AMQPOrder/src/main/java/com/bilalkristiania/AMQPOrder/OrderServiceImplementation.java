@@ -1,5 +1,7 @@
 package com.bilalkristiania.AMQPOrder;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.Transient;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -27,6 +30,8 @@ public class OrderServiceImplementation implements OrderService{
     private final OrderEventPub orderEventPub;
 
     private final RestTemplate restTemplate;
+
+    private final ObjectMapper objectMapper;
 
 
     @Value("${amqp.routing.key.inventory}")
@@ -52,6 +57,27 @@ public class OrderServiceImplementation implements OrderService{
 
         return orderRepository.save(order);
     }
+
+    /*
+    public Optional<Integer> getProductQuantity(Long productId) {
+        final String url = "http://localhost:8084/api/inventory/getProduct/" + productId;
+        try {
+            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+            if (response.getStatusCode() == HttpStatus.OK && response.hasBody()) {
+                JsonNode rootNode = objectMapper.readTree(response.getBody());
+                int quantity = rootNode.path("quantity").asInt();
+                log.info(quantity + " this is the quantity from api call");
+                return Optional.of(quantity);
+            }
+        } catch (HttpClientErrorException.NotFound e) {
+            log.warn("Product not found for productID {}", productId);
+        } catch (Exception e) {
+            log.error("Error while getting product quantity for productID {}: {}", productId, e.getMessage());
+        }
+        return Optional.empty();
+    }
+
+     */
 
     public boolean checkUserExists(Long userId) {
         final String url = "http://localhost:8080/api/users/" + userId; // URL of your User Service

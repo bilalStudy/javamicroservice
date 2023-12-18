@@ -18,7 +18,7 @@ public class ReceiveOrderEvent {
         this.inventoryServiceImplementation = inventoryServiceImplementation;
     }
 
-    @RabbitListener(queues = "${amqp.queue.order}") // Replace with the actual queue name
+    @RabbitListener(queues = "${amqp.queue.order.to.inventory}") // Replace with the actual queue name
     public void receiveOrderEvent(OrderEvent orderEvent) {
         log.info("Received Order Event in Inventory Service: {}", orderEvent);
         InventoryResult inventoryResult = inventoryServiceImplementation.processOrderEvent(orderEvent);

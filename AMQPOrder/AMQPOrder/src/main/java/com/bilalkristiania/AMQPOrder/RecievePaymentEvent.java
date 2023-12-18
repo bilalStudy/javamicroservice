@@ -12,9 +12,12 @@ public class RecievePaymentEvent {
 
     OrderServiceImplementation orderServiceImplementation;
 
+    private final OrderEventPub orderEventPub;
+
     @Autowired
-    public RecievePaymentEvent(OrderServiceImplementation orderServiceImplementation) {
+    public RecievePaymentEvent(OrderServiceImplementation orderServiceImplementation, OrderEventPub orderEventPub) {
         this.orderServiceImplementation = orderServiceImplementation;
+        this.orderEventPub = orderEventPub;
     }
 
     @RabbitListener(queues = "${amqp.queue.payment}") // Replace with the actual queue name

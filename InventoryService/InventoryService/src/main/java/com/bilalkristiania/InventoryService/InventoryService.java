@@ -1,5 +1,7 @@
 package com.bilalkristiania.InventoryService;
 
+import java.util.Optional;
+
 public interface InventoryService {
 
     InventoryResult processOrderEvent(OrderEvent orderEvent);
@@ -11,7 +13,7 @@ public interface InventoryService {
 
     Inventory getInventoryById(Long id);
 
-    Inventory getInventoryByProductId(Long productId);
+    Optional<Inventory> getInventoryByProductId(Long productId);
 
     Inventory saveInventory(Inventory carInventory);
 

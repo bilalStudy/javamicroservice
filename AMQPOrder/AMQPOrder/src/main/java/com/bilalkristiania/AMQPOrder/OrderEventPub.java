@@ -38,6 +38,7 @@ public class OrderEventPub {
         amqpTemplate.convertAndSend(orderExchange, routingKey, event);
     }
 
+
     private OrderEvent buildEvent(final OrderEvent inputEvent) {
         OrderEvent event = new OrderEvent();
 

@@ -35,11 +35,25 @@ public class InventoryServiceImplementation implements InventoryService{
     @Override
     public InventoryResult processInventory(OrderEvent orderEvent) {
         Long productIdFromOrder = orderEvent.getProductId();
-        Inventory inventoryResult = getInventoryByProductId(productIdFromOrder);
-        boolean isStockAvailable = inventoryResult.getQuantity() > 0;
-        int quantity = inventoryResult.getQuantity();
-        Long productIdFromDatabase = inventoryResult.getProductId();
-        return new InventoryResult(productIdFromDatabase, quantity, isStockAvailable );
+        Optional<Inventory> inventoryOpt = getInventoryByProductId(productIdFromOrder);
+
+        if (inventoryOpt.isPresent()) {
+            Inventory inventory = inventoryOpt.get();
+            boolean isStockAvailable = inventory.getQuantity() > 0;
+
+            if (isStockAvailable){
+                int newQuantity = inventory.getQuantity() - 1;
+                inventory.setQuantity(newQuantity);
+                inventoryRepository.save(inventory);
+            }else {
+                log.warn("Inventory for Product ID {} is out of stock", productIdFromOrder);
+            }
+            //use inventory related to the productId and then take minus 1 from the stock in db
+            return new InventoryResult(inventory.getProductId(),inventory.getQuantity(), isStockAvailable);
+        } else {
+            log.warn("Inventory not found for Product ID: {}", productIdFromOrder);
+            return new InventoryResult(productIdFromOrder, 0, false);
+        }
     }
 
 
@@ -51,9 +65,8 @@ public class InventoryServiceImplementation implements InventoryService{
     }
 
 
-    public Inventory getInventoryByProductId(Long productId) {
-        return inventoryRepository.findByProductId(productId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Didn't find inventory with Product ID: " + productId));
+    public Optional<Inventory> getInventoryByProductId(Long productId) {
+        return inventoryRepository.findByProductId(productId);
     }
 
 
@@ -78,17 +91,15 @@ public class InventoryServiceImplementation implements InventoryService{
     //might need to make this method void, instead of returning InventoryEvent
     @Override
     public void sendRabbitInventoryEvent(InventoryEvent inventoryEvent) {
-        try {
-            long inventoryId = getInventoryByProductId(inventoryEvent.getProductId()).getId();
-            inventoryEvent.setInventoryId(inventoryId);
-        } catch (ResponseStatusException e) {
-            // Handle the exception, e.g., log it or set a default value
-            log.error("Inventory item not found for Product ID: {}", inventoryEvent.getProductId(), e);
+        Optional<Inventory> inventoryOpt = getInventoryByProductId(inventoryEvent.getProductId());
 
-            // Optionally, you might want to set a default value or take other actions
-            inventoryEvent.setInventoryId(-1L); // Example: set to -1 to indicate not found
-            // You can also return from the method or throw a custom exception if needed
-            return;
+        if (inventoryOpt.isPresent()) {
+            long inventoryId = inventoryOpt.get().getId();
+            inventoryEvent.setInventoryId(inventoryId);
+        } else {
+            log.warn("Inventory item not found for Product ID: {}", inventoryEvent.getProductId());
+            inventoryEvent.setInventoryId(-1L); // Set to -1 or any other appropriate value to indicate not found
+            // If you want to stop the method execution here, use 'return;'
         }
 
         // Continue with setting other fields and sending events
