@@ -15,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.Transient;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -67,6 +68,56 @@ public class OrderServiceImplementation implements OrderService{
             return false;
         }
     }
+
+    public Order processOrderFromPayment(PaymentEvent paymentEvent){
+        // Fetch the order using the order ID from the payment event
+        Long orderId = paymentEvent.getOrderId();
+        Optional<Order> orderOptional = orderRepository.findById(orderId);
+
+        if (orderOptional.isEmpty()) {
+            // Handle the case where the order is not found
+            throw new RuntimeException("Order not found with ID: " + orderId);
+        }
+
+        Order order = orderOptional.get();
+
+        // Update the order status based on the payment success
+        if (paymentEvent.isPaymentSuccessful()) {
+            order.setStatus("Completed");
+        } else {
+            order.setStatus("Payment Failed");
+        }
+
+
+        return orderRepository.save(order);
+    }
+
+    /* might cause issues with the code at this moment
+    public Order processOrderFromInventory(InventoryEvent inventoryEvent){
+        // Fetch the order using the order ID from the payment event
+        Long orderId = inventoryEvent.getOrderId();
+        Optional<Order> orderOptional = orderRepository.findById(orderId);
+
+        if (orderOptional.isEmpty()) {
+            // Handle the case where the order is not found
+            throw new RuntimeException("Order not found with ID: " + orderId);
+        }
+
+        Order order = orderOptional.get();
+
+        // Update the order status based on the payment success
+        if (inventoryEvent.isStockAvailable()) {
+            // has to be the same as the paymentEvent since there is stock, and payment takes care of its own logic
+            order.setStatus("Completed");
+        } else {
+            order.setStatus("No Stock");
+        }
+
+
+        return orderRepository.save(order);
+    }'
+
+     */
 
 
     @Transactional

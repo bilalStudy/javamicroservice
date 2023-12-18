@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.bilalkristiania</groupId>
-	<artifactId>ProductService</artifactId>
+	<artifactId>Order2Service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>OrderService</name>
 	<description>Order service created with spring boot</description>
