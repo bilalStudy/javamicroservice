@@ -1,0 +1,58 @@
+{
+  "name": "client",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "scripts": {
+    "test": "jest",
+    "dev": "parcel watch index.html",
+    "build": "parcel build index.html",
+    "verify": "jest --collectCoverage",
+    "start": "parcel index.html --open",
+    "start2": "parcel index.html"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/preset-env": "^7.22.5",
+    "@babel/preset-react": "^7.22.5",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/material": "^5.14.15",
+    "@types/jest": "^29.5.2",
+    "@types/react": "^18.2.13",
+    "@types/react-dom": "^18.2.6",
+    "babel-jest": "^29.5.0",
+    "buffer": "^6.0.3",
+    "jest": "^29.5.0",
+    "jest-environment-jsdom": "^29.5.0",
+    "jsdom": "^22.1.0",
+    "node-fetch": "^3.3.1",
+    "parcel": "^2.9.2",
+    "process": "^0.11.10",
+    "punycode": "^2.3.0",
+    "react": "^18.2.0",
+    "react-cookie": "^4.1.1",
+    "react-dom": "^18.2.0",
+    "react-icons": "^4.11.0",
+    "react-qr-code": "^2.0.12",
+    "react-router-dom": "^6.13.0",
+    "util": "^0.12.5"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "globals": {
+      "IS_REACT_ACT_ENVIRONMENT": true
+    },
+    "collectCoverageFrom": [
+      "*.{jsx,js}"
+    ]
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-env",
+      "@babel/preset-react"
+    ]
+  }
+}

@@ -23,6 +23,7 @@ public class RecievePaymentEvent {
     @RabbitListener(queues = "${amqp.queue.payment}") // Replace with the actual queue name
     public void receivePaymentEvent(PaymentEvent paymentEvent) {
         log.info("Received Payment Event in Order Service: {}", paymentEvent);
+        orderServiceImplementation.processOrderFromPayment(paymentEvent);
     }
 
     //need to move this to another class or rename the class to listener
