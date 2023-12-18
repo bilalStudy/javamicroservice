@@ -21,10 +21,22 @@ spring:
         default-context: defaults
     gateway:
       routes:
-        - id: OrderService
-          uri: lb://OrderService/
+        - id: AMQPOrder
+          uri: lb://AMQPOrder/
           predicates:
             - Path=/api/orders/**
+        - id: AMQPPayment
+          uri: lb://AMQPPayment/
+          predicates:
+            - Path=/api/payment/**
+        - id: InventoryService
+          uri: lb://InventoryService/
+          predicates:
+            - Path=/api/inventory/**
+        - id: springtest
+          uri: lb://springtest/
+          predicates:
+            - Path=/api/users/**
         - id: ProductService
           uri: lb://ProductService/
           predicates:
@@ -32,7 +44,9 @@ spring:
       globalcors:
         cors-configurations:
           '[/**]':
-            allowedOrigins: "http://localhost:3000"
+            allowedOrigins:
+            - "http://localhost:3000"
+            - "http://localhost:1234"
             allowedHeaders:
               - "*"
             allowedMethods:

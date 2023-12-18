@@ -5,10 +5,12 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -34,8 +36,18 @@ public class OrderController {
     @GetMapping("/orders/{id}")
     public Order getOrderById(@PathVariable Long id){
         return orderRepository.findById(id)
-                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Didnt find product with ID" + id));
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Didnt find order with ID" + id));
     }
+
+    @GetMapping("/orders/user/{userId}")
+    public ResponseEntity<List<Order>> getOrdersByUserId(@PathVariable Long userId) {
+        List<Order> orders = orderService.getOrderByUserId(userId);
+        if (orders.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(orders);
+    }
+
 
     @PostMapping("/orders")
     public Order newOrder(@RequestBody Order order){
@@ -45,8 +57,8 @@ public class OrderController {
     }
 
     @PostMapping("/orders/save")
-    public void newOrderAndSendEvent(@RequestBody Order order) {
-        orderService.saveOrderAndSendMsg(order);
+    public Order newOrderAndSendEvent(@RequestBody Order order) {
+        return orderService.saveOrderAndSendMsg(order);
     }
 
 

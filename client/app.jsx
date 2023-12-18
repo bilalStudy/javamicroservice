@@ -1,6 +1,8 @@
 import React, {useContext} from "react";
 import {HashRouter, Route, Routes, Link} from "react-router-dom";
 import {ListCarsPage} from "./pages/ListCarsPage";
+import {OrderForm} from "./pages/CreateOrderPageWithMockUser";
+import {ListOrderForMockUser} from "./pages/ListOrderForMockUser";
 
 
 export function Application ()  {
@@ -12,6 +14,8 @@ export function Application ()  {
                 <Routes>
                     <Route path="/" element={<HomePage/>} />
                     <Route path="/cars" element={<ListCarsPage/>} />
+                    <Route path="/order/create" element={<OrderForm/>} />
+                    <Route path="/order/list/user" element={<ListOrderForMockUser/>} />
                 </Routes>
             </main>
         </HashRouter>
@@ -30,10 +34,10 @@ export function HomePage () {
                 <Link to="/cars">All our Cars</Link>
             </div>
             <div>
-                <Link to="/register">Register</Link>
+                <Link to="/order/create">Create Order For Car</Link>
             </div>
             <div>
-                <Link to="/denied">No Access Component Check</Link>
+                <Link to="/order/list/user">List Orders Based on User</Link>
             </div>
         </div>
     )

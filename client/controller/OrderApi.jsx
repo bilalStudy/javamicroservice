@@ -56,7 +56,7 @@ export const orderApi = {
         return res.ok;
     },
     listBasedOnUser: async (userId) => {
-        const res = await fetch(`http://localhost:9080/api/orders/${userId}`)
+        const res = await fetch(`http://localhost:9080/api/orders/user/${userId}`)
 
         return await res.json();
     }

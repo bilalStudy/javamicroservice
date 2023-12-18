@@ -48,6 +48,12 @@ public class OrderServiceImplementation implements OrderService{
         return null;
     }
 
+    @Override
+    public List<Order> getOrderByUserId(Long userId) {
+        return orderRepository.findByUserId(userId);
+    }
+
+
     @Transactional
     @Override
     public Order saveOrder(Order order) {
@@ -93,6 +99,7 @@ public class OrderServiceImplementation implements OrderService{
             return false;
         }
     }
+
 
     public Order processOrderFromPayment(PaymentEvent paymentEvent){
         // Fetch the order using the order ID from the payment event
@@ -191,18 +198,25 @@ public class OrderServiceImplementation implements OrderService{
     }
 
     private void setOrderAndSubtotal(Order order) {
-        for (EquipmentItem equipmentItem: order.getOrderItems()) {
-            equipmentItem.setOrder(order);
-            equipmentItem.setSubtotal(equipmentItem.getUnitPrice()*equipmentItem.getQuantity());
+        List<EquipmentItem> items = order.getOrderItems();
+        if (items != null) {
+            for (EquipmentItem equipmentItem : items) {
+                equipmentItem.setOrder(order);
+                equipmentItem.setSubtotal(equipmentItem.getUnitPrice() * equipmentItem.getQuantity());
+            }
+            log.info("OrderItems size: " + items.size());
+            double totalAmount = calculateTotalAmount(items, order.getProductAmount());
+            order.setTotalAmount(totalAmount);
+        } else {
+            log.warn("OrderItems is null for order: " + order.getId());
+            // Handle the case where order items are null, e.g., set a default total amount
+            order.setTotalAmount(order.getProductAmount());
         }
-
-
-        log.info("OrderItems size: " + order.getOrderItems().size());
-        double totalAmount = calculateTotalAmount(order.getOrderItems(), order.getProductAmount());
-        order.setTotalAmount(totalAmount);
     }
 
     private double calculateTotalAmount(List<EquipmentItem> items, double productAmount) {
+        if (items == null) return productAmount;
+
         double equipmentTotal = items.stream()
                 .mapToDouble(item -> item.getQuantity() * item.getUnitPrice())
                 .sum();
