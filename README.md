@@ -102,6 +102,7 @@ npm run start
 
 ## Additional info
 I would recommend creating all these various posts to save before trying to send an order.
+I would also recommend creating multiple products, inventory with the productsId that you created and maybe create more users to play around with the frontend a bit.
 
 ## Dockerization
 To dockerize the application:you cd into the respective microservice and do docker build -t microservice name that corresponds with the docker-compose.yml and then add a punctuation so it builds from the dockerfile in the directory you are in. as an example in my docker-compose the AMQPOrder service is named amqporder:latest so then I need that image
