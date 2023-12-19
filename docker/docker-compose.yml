@@ -1,36 +1,34 @@
 version: "3"
 
 services:
-  frontend:
-    image: challenges-frontend:1.0
-    ports:
-      - '3000:80'
-  multiplication:
-    image: multiplication:2.7.1-SNAPSHOT
+  amqporder:
+    image: amqporder:latest
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - SPRING_CLOUD_CONSUL_HOST=consul
-      - SPRING_DATASOURCE_URL=jdbc:h2:tcp://h2-server:1521/home/h2-data/multiplication;NON_KEYWORDS=USER;
+      - SPRING_DATASOURCE_URL=jdbc:h2:~/amqporder;DB_CLOSE_ON_EXIT=FALSE;NON_KEYWORDS=order;
     depends_on:
       - rabbitmq-dev
       - consul-importer
     networks:
       - microservices
-  gamification:
-    image: gamification:2.7.1-SNAPSHOT
+
+  amqppayment:
+    image: amqppayment:latest
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - SPRING_CLOUD_CONSUL_HOST=consul
-      - SPRING_DATASOURCE_URL=jdbc:h2:tcp://h2-server:1521/home/h2-data/gamification
+      - SPRING_DATASOURCE_URL=jdbc:h2:~/amqppayment;DB_CLOSE_ON_EXIT=FALSE;
     depends_on:
       - rabbitmq-dev
       - consul-importer
     networks:
       - microservices
+
   gateway:
-    image: gateway:2.7.1-SNAPSHOT
+    image: gateway:latest
     ports:
-      - '8000:8000'
+      - '9080:9080'
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - SPRING_CLOUD_CONSUL_HOST=consul
@@ -39,22 +37,50 @@ services:
       - consul-importer
     networks:
       - microservices
-  logs:
-    image: logs:2.7.1-SNAPSHOT
+
+  inventoryservice:
+    image: inventoryservice:latest
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - SPRING_CLOUD_CONSUL_HOST=consul
+      - SPRING_DATASOURCE_URL=jdbc:h2:~/inventory;DB_CLOSE_ON_EXIT=FALSE;
     depends_on:
       - rabbitmq-dev
       - consul-importer
     networks:
       - microservices
+
+  productservice:
+    image: productservice:latest
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_CLOUD_CONSUL_HOST=consul
+      - SPRING_DATASOURCE_URL=jdbc:h2:~/product;DB_CLOSE_ON_EXIT=FALSE;
+    depends_on:
+      - rabbitmq-dev
+      - consul-importer
+    networks:
+      - microservices
+
+  springtest:
+    image: springtest:latest
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_CLOUD_CONSUL_HOST=consul
+      - SPRING_DATASOURCE_URL=jdbc:h2:~/test;DB_CLOSE_ON_EXIT=FALSE;NON_KEYWORDS=user;
+    depends_on:
+      - rabbitmq-dev
+      - consul-importer
+    networks:
+      - microservices
+
   consul-importer:
     image: consul-importer:1.9
     depends_on:
       - consul-dev
     networks:
       - microservices
+
   consul-dev:
     image: consul:1.9
     container_name: consul
@@ -64,6 +90,7 @@ services:
     command: 'agent -dev -node=learnmicro -client=0.0.0.0 -log-level=INFO'
     networks:
       - microservices
+
   rabbitmq-dev:
     image: rabbitmq:3-management
     container_name: rabbitmq
@@ -72,6 +99,7 @@ services:
       - '15672:15672'
     networks:
       - microservices
+
   h2-server-dev:
     image: h2-server:2.1.214
     container_name: h2-server
