@@ -1,5 +1,9 @@
 
 # Microservices Application Setup Guide
+## this repository is also based on this repositiory
+https://github.com/bilalStudy/amqpconfig
+and has its own link at
+https://github.com/bilalStudy/javamicroservice
 
 ## Overview
 This guide outlines the setup process for a microservices-based application involving various services like User, Product, Order, Payment, and Inventory, along with a Gateway service. The application utilizes RabbitMQ, Consul, and H2 database, and is managed through Maven and Docker.
@@ -84,9 +88,16 @@ Use Postman or curl commands to initialize data:
 }
 ```
 
-
 ## Payment Info
 And we could also create a POST to payment at http://localhost:8083/api/payment but this takes only one account for the transaction and that is the account with id 1, if you don't create it before the service exists but have done all the other posts it will automatically create the account with a balance of 4000000
+
+## Frontend
+To run the frontend, you need Node.js and npm installed. You can run the frontend with the following command:
+
+```bash
+cd client
+npm run start
+```
 
 ## Additional info
 I would recommend creating all these various posts to save before trying to send an order.
@@ -103,7 +114,43 @@ To dockerize the application:you cd into the respective microservice and do dock
 - Alternatively, to run without microservices use `docker compose -f docker-compose-no-microservices.yml up --build`.
 
 ## Additional Notes
+![](img/notworkingdocker.png)
 I hope there is some lenience on the docker part since I used a total of 6 hours to make it run on my machine. Despite it saying that it wasn't possible to run wsl(windows subsystem for linux) on windows 10 home. And my pc not having support for hyper-v virtualization. Despite this it should still be running.
-
+## Diagram
+![](img/diagram.jpg)
 ## Application Workflow
-For how the microservice application works. When everything of the data is set at the company for luxury cars, it will initiate both synchronous calls and asynchronous calls when an order from the client is sent. This order will then check if the userId exists with a synchronous REST api call and also send the OrderEvent if the user exists to the InventoryService and PaymentService with asynchronous event driven communication using RabbitMQ. In the inventory we will see if there is stock for the productId given by the order, and then return true if we do have stock aswell as remove one from the quantity for that product. This inventory service also sends an event to the product service and updates the availability of the product to false if we are out of stock. The orderevent is also sent from the order to the payment, the payment does a rest call to the inventory service with the productId given and checks for stock with a REST call, if we do indeed have stock we will process the payment and send it back to order. In order after payment, the order is saved as completed. The call from payment to inventory to check for stock should in theory not happen but I will talk more about this in the reflection documentation.
+For how the microservice application works. When everything of the data is set at the company for luxury cars, it will initiate both synchronous calls and asynchronous calls when an order from the client is sent. This order will then check if the userId exists with a synchronous REST api call and also send the OrderEvent if the user exists to the InventoryService and PaymentService with asynchronous event driven communication using RabbitMQ. In the inventory we will see if there is stock for the productId given by the order, and then return true if we do have stock aswell as remove one from the quantity for that product. This inventory service also sends an event to the product service and updates the availability of the product to false if we are out of stock. The orderevent is also sent from the order to the payment, the payment does a rest call to the inventory service with the productId given and checks for stock with a REST call, if we do indeed have stock we will process the payment and send it back to order. In order after payment, the order is saved as completed. The call from payment to inventory to check for stock should in theory not happen but I will talk more about this in the reflection documentation. The gateway is load balancing, health checking and has centrally configuration.
+
+
+## Microservices Overview
+
+## AMQPOrder Service
+- Manages order-related operations.
+- Communicates with the Inventory Service to check stock availability and with the AMQPPayment Service to process payments.
+- Performs REST calls to the Springtest (User Service) to validate the legitimacy of the userId associated with each order.
+
+## AMQPPayment Service
+- Processes payment events related to orders.
+- Assesses if users have sufficient funds and communicates the outcome back to the AMQPOrder Service.
+- Makes REST calls to the Inventory Service to confirm stock availability before processing orders.
+
+## Gateway Service
+- Acts as the primary entry point to the microservices ecosystem.
+- Routes requests to the appropriate microservices, managing load balancing and service discovery.
+- Implements global configurations such as CORS settings and common filters like retry logic.
+
+## Inventory Service
+- Responds to order events by checking stock levels.
+- Adjusts stock quantities based on order details and informs the AMQPOrder Service about stock availability.
+- Sends events to the ProductService to update real-time product availability.
+
+## Product Service
+- Represents the actual products, mainly cars, in the system.
+- Receives updates from the Inventory Service to reflect real-time availability of products.
+
+## Springtest (User Service)
+- Provides functionalities for creating and managing mock users.
+- Ensures that user IDs provided in orders correspond to actual, legitimate users in the system.
+
+## Pictures of Working Application
+![](img/dockercomposestart.png)![](img/gateway.png)![](img/gatewaystarted.png)![](img/multipleservicerunning.png)![](img/orderpost.png)![](img/postinventory.png)![](img/postproduct.png)![](img/postuser.png)![](img/rabbitinventory.png)![](img/rabbitorder.png)![](img/rabbitpayment.png)![](img/rabbitproduct.png)
