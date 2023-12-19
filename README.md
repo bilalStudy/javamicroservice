@@ -27,7 +27,8 @@ This guide outlines the setup process for a microservices-based application invo
 ## Local Setup
 1. **RabbitMQ & Consul**: Start RabbitMQ and Consul. Consul can be started with `consul agent -node=learnmicro -dev`. On Windows, use `.\consul agent -node=learnmicro -dev`.
 2. **Maven**: Navigate to the microservice directory (e.g., `AMQPOrder/AMQPOrder`) and run `mvn clean install` to generate the `target` folder with a `.jar` file.
-3. **Microservice Startup**: Start all microservices. Note that services like AMQPOrder, AMQPPayment, Inventory, and Product Service might crash initially due to non-existent queues. Restart them after the initial run.
+3. **Microservice Startup**: Start all microservices. Note that services like AMQPOrder, AMQPPayment, Inventory, and Product Service might crash initially due to non-existent queues. Restart them after the initial run. Notices this 2 days before when testing on another computer.
+4. **Dealing with H2**: Sometimes H2 will crash if you have corrupted the files, its not something that should happen but deleting the local files and restarting the service should usually solve this. i doubt this is needed but its okey to know about.
 
 ## Data Initialization
 Use Postman or curl commands to initialize data:
