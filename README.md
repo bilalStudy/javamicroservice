@@ -152,5 +152,13 @@ For how the microservice application works. When everything of the data is set a
 - Provides functionalities for creating and managing mock users.
 - Ensures that user IDs provided in orders correspond to actual, legitimate users in the system.
 
+## User Stories
+The user stories from the arbeidskrav: As a potential car buyer. I want to view a list of available cars. So that I can select a car to purchase.
+As a registered user/mock user. I want to be able to place an order for a selected car. So that I can initiate the car purchase process.Æ
+As a user placing an order/mock user. I want to be notified if my order is successfully processed or canceled. So that I am aware of the status of my car purchase.
+As a user making a purchase/mock user. I want to have a receipt for my completed purchases.
+So that I can keep a record of my transactions. All of these are implemented,
+but the details for them could be nicer in the frontend. also some more details on this in the reflection document.
+
 ## Pictures of Working Application
 ![](img/dockercomposestart.png)![](img/gateway.png)![](img/gatewaystarted.png)![](img/multipleservicerunning.png)![](img/orderpost.png)![](img/postinventory.png)![](img/postproduct.png)![](img/postuser.png)![](img/rabbitinventory.png)![](img/rabbitorder.png)![](img/rabbitpayment.png)![](img/rabbitproduct.png)
