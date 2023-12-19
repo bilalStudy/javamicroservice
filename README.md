@@ -97,6 +97,7 @@ To run the frontend, you need Node.js and npm installed. You can run the fronten
 
 ```bash
 cd client
+npm install
 npm run start
 ```
 
